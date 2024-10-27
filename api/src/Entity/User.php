@@ -57,12 +57,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:create', 'user:update'])]
     private ?string $plainPassword = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $roles = [];
+
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: ['ROLE_USER', 'ROLE_COMPANY_ADMIN', 'ROLE_SUPER_ADMIN'])]
+    #[Groups(['user:read', 'user:create', 'user:update'])]
+    public string $role;
+
+    #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 100)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z\s]*$/',
+        message: 'Name should contain only letters and spaces.'
+    )]
+    #[Assert\Regex(
+        pattern: '/[A-Z]/',
+        message: 'Name must contain at least one uppercase letter.'
+    )]
+    #[Groups(['user:read', 'user:create', 'user:update'])]
+    private string $name;
+
+
+    #[ORM\ManyToOne(targetEntity: Company::class)]
+    #[ORM\JoinColumn(nullable: false)]
+//    #[ApiProperty(writable: true)]
+    #[Groups(['user:read', 'user:create', 'user:update'])]
+    private ?Company $company = null;
+
+    public function __construct(
+        string $name,
+        string $role,
+        ?Company $company = null
+    ) {
+        $this->name = $name;
+        $this->role = $role;
+        $this->company = $company;
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
     }
 
     public function getEmail(): ?string
