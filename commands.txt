@@ -1,0 +1,11 @@
+git clone https://github.com/Tahmurath/api_platform_3_4.git
+
+
+docker compose build --no-cache
+
+
+docker compose up --wait
+
+docker compose logs -f
+
+
