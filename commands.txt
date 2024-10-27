@@ -8,4 +8,9 @@ docker compose up --wait
 
 docker compose logs -f
 
+#docker compose exec php bin/console make:entity --api-resource
+
+docker compose exec php bin/console doctrine:migrations:diff
+docker compose exec php bin/console doctrine:migrations:migrate
+docker compose exec pwa pnpm create @api-platform/client
 
