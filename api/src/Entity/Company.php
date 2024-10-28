@@ -18,8 +18,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 //#[Post(security: "is_granted('ROLE_SUPER_ADMIN')")]
 #[ApiResource(
     operations: [
-        new Get(),
-        new Post(),
+        new Get(
+            security: "is_granted(ROLE_USER)", // available for all roles
+            securityMessage: 'Sorry, but you are not the owner.'
+        ),
+        new Post(
+            security: "is_granted('ROLE_SUPER_ADMIN')", // available for SUPERADMIN and COMPANY ADMIN
+            securityMessage: 'Sorry, but you are not the owner.',),
         new GetCollection()
     ]
 )]
