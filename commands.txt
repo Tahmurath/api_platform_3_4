@@ -20,8 +20,5 @@ truncate table "user";
 truncate table "company";
 
 
-docker compose exec php bin/console security:hasg-password
-123456
 
-Hasher used     Symfony\Component\PasswordHasher\Hasher\MigratingPasswordHasher
-Password hash   $2y$13$rAmmDu2Lc/efhws09CUZqu6VE2H8pYx1Nkpee0o4Kgk.8Dptoqpza
+docker compose exec php bin/console doctrine:migrations:diff --from-empty-schem
