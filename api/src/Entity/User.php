@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: ['ROLE_USER', 'ROLE_COMPANY_ADMIN', 'ROLE_SUPER_ADMIN'])]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create'])]
     public string $role;
 
     #[ORM\Column(type: 'string', length: 100)]
