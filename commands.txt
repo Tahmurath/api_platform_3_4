@@ -17,8 +17,13 @@ docker compose exec pwa pnpm create @api-platform/client
 psql -d app -U app -W
 !ChangeMe!
 truncate table "user";
+
 truncate table "company";
 
+set -e
+    apt-get install openssl
+    php bin/console lexik:jwt:generate-keypair
+    setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
+    setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
 
-
-docker compose exec php bin/console doctrine:migrations:diff --from-empty-schem
+bin/console make:voter

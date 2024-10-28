@@ -23,16 +23,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(), //@todo user & admin only can see their company, supre admin can see all
-        new GetCollection(),
-
-        //@todo #[Post(security: "is_granted('ROLE_SUPER_ADMIN','ROLE_COMPANY_ADMIN')")]
-        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
-
-        //new Put(processor: UserPasswordHasher::class),
-        //new Patch(processor: UserPasswordHasher::class),
-        //@todo #[Post(security: "is_granted('ROLE_SUPER_ADMIN')")]
-        new Delete(),
+        new Get(
+            security: "is_granted('USER_VIEW', object)", // Will use the voter for VIEW
+            securityMessage: 'Sorry, but you are not the owner.'
+        ),
+        new GetCollection(
+            security: "is_granted('USER_VIEW', object)", // Will use the voter for VIEW
+            securityMessage: 'Sorry, but you are not the owner.'
+        ),
+        new Post(
+            security: "is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_COMPANY_ADMIN')", // available for SUPERADMIN and COMPANY ADMIN
+            securityMessage: 'Sorry, but you are not the owner.',
+            validationContext: ['groups' => ['Default', 'user:create']], // Will use the voter for VIEW
+            processor: UserPasswordHasher::class
+        ),
+        new Put(processor: UserPasswordHasher::class),
+        new Patch(processor: UserPasswordHasher::class),
+        new Delete(
+            security: "is_granted('ROLE_SUPER_ADMIN')", // available for SUPERADMIN only
+            securityMessage: 'Sorry, but you are not the owner.'
+        ),
     ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
@@ -65,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: ['ROLE_USER', 'ROLE_COMPANY_ADMIN', 'ROLE_SUPER_ADMIN'])]
-    #[Groups(['user:create'])]
+    #[Groups(['user:read', 'user:create', 'user:update'])]
     public string $role;
 
     #[ORM\Column(type: 'string', length: 100)]
@@ -170,7 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        return [$this->role];
     }
 
     public function setRoles(array $roles): self
