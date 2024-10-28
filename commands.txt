@@ -17,4 +17,3 @@ docker compose exec pwa pnpm create @api-platform/client
 psql -d app -U app -W
 !ChangeMe!
 truncate table "user";
-truncate table "company";

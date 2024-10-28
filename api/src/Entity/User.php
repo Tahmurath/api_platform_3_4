@@ -23,15 +23,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(), //@todo user & admin only can see their company, supre admin can see all
         new GetCollection(),
-
-        //@todo #[Post(security: "is_granted('ROLE_SUPER_ADMIN','ROLE_COMPANY_ADMIN')")]
         new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
-
-        //new Put(processor: UserPasswordHasher::class),
-        //new Patch(processor: UserPasswordHasher::class),
-        //@todo #[Post(security: "is_granted('ROLE_SUPER_ADMIN')")]
+        new Get(),
+        new Put(processor: UserPasswordHasher::class),
+        new Patch(processor: UserPasswordHasher::class),
         new Delete(),
     ],
     normalizationContext: ['groups' => ['user:read']],
@@ -65,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: ['ROLE_USER', 'ROLE_COMPANY_ADMIN', 'ROLE_SUPER_ADMIN'])]
-    #[Groups(['user:create'])]
+    #[Groups(['user:read', 'user:create', 'user:update'])]
     public string $role;
 
     #[ORM\Column(type: 'string', length: 100)]
