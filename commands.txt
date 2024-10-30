@@ -52,6 +52,12 @@ curl -k -X 'POST' 'https://localhost/auth' -H 'accept: application/json' -H 'Con
 curl -k -X 'GET' 'https://localhost/users?page=1' -H 'accept: application/ld+json' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzAyMDY5NDUsImV4cCI6MTczMDIxMDU0NSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZWVlZWVAc2Rmc2RmLmNvbSJ9.z6_hNoS8l-vEFzpxnt6WlTgnWGsA9vBBrqdvdxtm3fDiteZz7xcRzujnDU-8jgCLz9Dz1o3ox76v6-79mwhDCN-UNiwW8VlDWIYUleSrrX4OJfbhJiVCCEzW7dUDyKde5nPbj2cZJqBFNr9fy5qFotiQykN5y6V9XRCVlrArTIbqKt7HzQaIE3Jh1oyvUXiJ4BPFEE70RQQ3O7JdYYnRq3jgZd_NVXzCMHsGFqQfCHYbh7Y3EEONSyyL5_T6POXmgkhSPByb_0fbLux-Y5K_-xgOlFbYUunkbKDlhEzJ0L0FsT-gQ0xtYEnhZmqI30xxt1c49syD4L9tIbyAmUONPw'
 
 
+docker compose exec php composer require symfony/browser-kit symfony/http-client
 
 
 
+
+sudo docker compose exec php bin/console doctrine:database:create --env=test
+
+sudo docker compose exec php bin/console doctrine:migrations:migrate --env=test
+sudo docker compose exec php bin/phpunit
